@@ -15,13 +15,13 @@ suite =
                     item = Item "test" 10 [BuyThreeGetOneFree]
                     line = Line item 3
                 in
-                    expect (computePrice line) to equal 10*2
+                    expect (computePrice line) to equal (10*2)
             , it "returns % price if method is %" <|
                 let
                     item = Item "test" 5 [PercentDiscount 50]
                     line = Line item 3
                 in
-                    expect (computePrice line) to equal (5*3) * 0.5
+                    expect (computePrice line) to equal ((5*3) * 0.5)
             , it "returns price by unit if method is by unit" <|
                 let
                     item = Item "test" 3 [ByUnit]
@@ -33,7 +33,7 @@ suite =
                     item = Item "test" 10 [PercentDiscount 5, BuyThreeGetOneFree]
                     line = Line item 3
                 in
-                    expect (computePrice line) to equal 10*2
+                    expect (computePrice line) to equal (10*2)
             , it "returns the most prioritary discount no matter the order" <|
                 let
                     item = Item "test" 10 [BuyThreeGetOneFree, PercentDiscount 5]
@@ -45,7 +45,7 @@ suite =
                     item = Item "test" 10 [BuyThreeGetOneFree, PercentDiscount 10, ByUnit]
                     line = Line item 2
                 in
-                    expect (computePrice line) to equal 18
+                    expect (computePrice line) to equal ((10*2) * (1 - 0.1))
             ]
 
         , describe "buyThreeGetOneFree"
