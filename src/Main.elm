@@ -4,7 +4,7 @@ import List exposing (..)
 
 type alias Item =
     { name: String
-    , price: Int
+    , price: Float
     , paymentMethodList: List PaymentMethod
     }
 
@@ -35,23 +35,23 @@ compareMethodPriority a b =
             0 -> EQ
             x -> if x < 0 then LT else GT
 
-buyThreeGetOneFree: Int -> Int -> Int
+buyThreeGetOneFree: Int -> Float -> Float
 buyThreeGetOneFree amount price =
     let
-        triplets = amount // 3
+        triplets = toFloat (amount // 3)
         rest = amount % 3
     in
-        (triplets * (price * 2)) + (byUnit price rest)
+        (triplets * (price * 2)) + (byUnit rest price)
 
-percent: Int -> Int -> Int -> Int
+percent: Int -> Int -> Float -> Float
 percent discount amount price =
     let
         totalPrice = byUnit amount price
     in
-        totalPrice - ((totalPrice * discount) // 100)
+        totalPrice - ((totalPrice * (toFloat discount)) / 100)
 
-byUnit: Int -> Int -> Int
-byUnit amount price = amount * price
+byUnit: Int -> Float -> Float
+byUnit amount price = (toFloat amount) * price
 
 isAppliable: Line -> PaymentMethod -> Bool
 isAppliable line method =
@@ -74,7 +74,7 @@ appliablePaymentMethod line methods =
             then method
             else appliablePaymentMethod line rest
 
-computePrice: Line -> Int
+computePrice: Line -> Float
 computePrice line =
     case (appliablePaymentMethod line line.item.paymentMethodList) of
         BuyThreeGetOneFree -> buyThreeGetOneFree line.amount line.item.price
