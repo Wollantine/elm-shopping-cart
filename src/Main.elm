@@ -13,7 +13,10 @@ type alias Line =
     , amount: Int
     }
 
-type PaymentMethod = BuyThreeGetOneFree | PercentDiscount Int | ByUnit
+type PaymentMethod =
+  BuyThreeGetOneFree |
+  PercentDiscount Int |
+  ByUnit
 
 methodPriority: PaymentMethod -> Int
 methodPriority method =
@@ -77,4 +80,3 @@ computePrice line =
         BuyThreeGetOneFree -> buyThreeGetOneFree line.amount line.item.price
         PercentDiscount discount -> percent discount line.amount line.item.price
         ByUnit -> byUnit line.amount line.item.price
-
