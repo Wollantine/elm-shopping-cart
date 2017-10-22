@@ -16,14 +16,16 @@ type alias Line =
 type PaymentMethod =
   BuyThreeGetOneFree |
   PercentDiscount Int |
-  ByUnit
+  ByUnit |
+  Pack Int Float
 
 methodPriority: PaymentMethod -> Int
 methodPriority method =
     case method of
         BuyThreeGetOneFree -> 0
-        PercentDiscount _ -> 1
-        ByUnit -> 2
+        Pack _ _ -> 1
+        PercentDiscount _ -> 2
+        ByUnit -> 3
 
 compareMethodPriority: PaymentMethod -> PaymentMethod -> Order
 compareMethodPriority a b =
@@ -53,6 +55,16 @@ percent discount amount price =
 byUnit: Int -> Float -> Float
 byUnit amount price = (toFloat amount) * price
 
+pack: Int -> Float -> Int -> Float -> Float
+pack packSize packPrice amount price =
+    let
+        packs = toFloat (amount // packSize)
+        rest = amount % packSize
+    in
+        (packs * packPrice) + (byUnit rest price)
+
+
+
 isAppliable: Line -> PaymentMethod -> Bool
 isAppliable line method =
     case method of
@@ -76,7 +88,12 @@ appliablePaymentMethod line methods =
 
 computePrice: Line -> Float
 computePrice line =
-    case (appliablePaymentMethod line line.item.paymentMethodList) of
-        BuyThreeGetOneFree -> buyThreeGetOneFree line.amount line.item.price
-        PercentDiscount discount -> percent discount line.amount line.item.price
-        ByUnit -> byUnit line.amount line.item.price
+    let
+        itemPrice = line.item.price
+        lineAmount = line.amount
+    in
+        case (appliablePaymentMethod line line.item.paymentMethodList) of
+            BuyThreeGetOneFree -> buyThreeGetOneFree lineAmount itemPrice
+            PercentDiscount discount -> percent discount lineAmount itemPrice
+            ByUnit -> byUnit lineAmount itemPrice
+            Pack size price -> pack size price lineAmount itemPrice

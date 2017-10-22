@@ -28,12 +28,24 @@ suite =
                     line = Line item 3
                 in
                     expect (computePrice line) to equal 9
+            , it "returns price for packs if method is pack" <|
+                let
+                    item = Item "test" 2 [Pack 6 10]
+                    line = Line item 6
+                in
+                    expect (computePrice line) to equal 10
             , it "returns 3x2 price if there are more than 2 items and has a 3x2 discount" <|
                 let
                     item = Item "test" 10 [PercentDiscount 5, BuyThreeGetOneFree]
                     line = Line item 3
                 in
                     expect (computePrice line) to equal (10*2)
+            , it "returns price having the packs in account if the amount is higher than pack amount" <|
+                let
+                    item = Item "test" 2 [Pack 6 10]
+                    line = Line item 8
+                in
+                    expect (computePrice line) to equal (10 + (2 * (8 - 6)))
             , it "returns the most prioritary discount no matter the order" <|
                 let
                     item = Item "test" 10 [BuyThreeGetOneFree, PercentDiscount 5]
@@ -66,8 +78,6 @@ suite =
                 expect (percent 25 10 10) to equal 75
             , it "returns 20% of the price if discount is 80%" <|
                 expect (percent 80 10 10) to equal 20
-            , it "rounds up" <|
-                expect (percent 50 5 1) to equal 3
             ]
 
         , describe "byUnit"
@@ -75,6 +85,15 @@ suite =
                 expect (byUnit 4 5) to equal 20
             , it "returns zero if the amount is zero" <|
                 expect (byUnit 0 10) to equal 0
+            ]
+
+        , describe "pack"
+            [ it "returns price by unit if amount is less than pack size" <|
+                expect (pack 6 5 4 1) to equal (4 * 1)
+            , it "returns price of pack if amount equals pack size" <|
+                expect (pack 6 5 6 10) to equal 5
+            , it "returns price of packs plus price by unit for extra units" <|
+                expect (pack 6 5 13 3) to equal (5 * 2 + 3)
             ]
 
         , describe "compareMethodPriority"
