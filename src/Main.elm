@@ -39,11 +39,7 @@ compareMethodPriority a b =
 
 buyThreeGetOneFree: Int -> Float -> Float
 buyThreeGetOneFree amount price =
-    let
-        triplets = toFloat (amount // 3)
-        rest = amount % 3
-    in
-        (triplets * (price * 2)) + (byUnit rest price)
+    pack 3 (price * 2) amount price
 
 percent: Int -> Int -> Float -> Float
 percent discount amount price =
