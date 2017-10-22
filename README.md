@@ -7,4 +7,4 @@ prioritized discount types with arbitrary restrictions.
 The kata can be found in the files:
 
 - [Main.elm](./src/Main.elm)
-- [MainSpec.elm](./src/tests/MainSpec.elm)
+- [MainSpec.elm](./tests/MainSpec.elm)
