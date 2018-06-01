@@ -74,9 +74,7 @@ appliablePaymentMethod line methods =
         method = case orderedMethods of
             m::_ -> m
             [] -> ByUnit
-        rest = case orderedMethods of
-            _::r -> r
-            [] -> []
+        rest = withDefault [] (tail orderedMethods)
     in
         if (isAppliable line method)
             then method
