@@ -37,7 +37,7 @@ compareMethodPriority a b =
             0 -> EQ
             x -> if x < 0 then LT else GT
 
-type PriceComputation = Int -> Float -> Float
+type alias PriceComputation = Int -> Float -> Float
 
 buyThreeGetOneFree: PriceComputation
 buyThreeGetOneFree amount price =
@@ -76,7 +76,7 @@ appliablePaymentMethod line methods =
         method = case orderedMethods of
             m::_ -> m
             [] -> ByUnit
-        rest = withDefault [] (tail orderedMethods)
+        rest = Maybe.withDefault [] (tail orderedMethods)
     in
         if (isAppliable line method)
             then method
