@@ -37,21 +37,23 @@ compareMethodPriority a b =
             0 -> EQ
             x -> if x < 0 then LT else GT
 
-buyThreeGetOneFree: Int -> Float -> Float
+type PriceComputation = Int -> Float -> Float
+
+buyThreeGetOneFree: PriceComputation
 buyThreeGetOneFree amount price =
     pack 3 (price * 2) amount price
 
-percent: Int -> Int -> Float -> Float
+percent: Int -> PriceComputation
 percent discount amount price =
     let
         totalPrice = byUnit amount price
     in
         totalPrice - ((totalPrice * (toFloat discount)) / 100)
 
-byUnit: Int -> Float -> Float
+byUnit: PriceComputation
 byUnit amount price = (toFloat amount) * price
 
-pack: Int -> Float -> Int -> Float -> Float
+pack: Int -> Float -> PriceComputation
 pack packSize packPrice amount price =
     let
         packs = toFloat (amount // packSize)
@@ -83,11 +85,11 @@ appliablePaymentMethod line methods =
 computePrice: Line -> Float
 computePrice line =
     let
-        itemPrice = line.item.price
-        lineAmount = line.amount
+        priceComputation: PriceComputation
+        priceComputation = case (appliablePaymentMethod line line.item.paymentMethodList) of
+            BuyThreeGetOneFree -> buyThreeGetOneFree
+            PercentDiscount discount -> percent discount
+            ByUnit -> byUnit
+            Pack size price -> pack size price
     in
-        case (appliablePaymentMethod line line.item.paymentMethodList) of
-            BuyThreeGetOneFree -> buyThreeGetOneFree lineAmount itemPrice
-            PercentDiscount discount -> percent discount lineAmount itemPrice
-            ByUnit -> byUnit lineAmount itemPrice
-            Pack size price -> pack size price lineAmount itemPrice
+        priceComputation line.amount line.item.price
